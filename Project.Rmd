@@ -1,0 +1,129 @@
+---
+title: "Survery on Mental Health Across Programs of Study in University"
+author: "Deanna King, Jim Moroney, Pooja Patel, Christopher Wilhite"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Packages
+In order to better interpret the dataset, we utilize the `pander` package for table creation and manipulation. Likewise, we use `insert other packages` for `insert reasoning`.
+
+```{r, message=FALSE}
+library(pander)
+```
+
+## Student Mental Health Data
+All data required for this interpretation was obtained from the International Islamic University in Malaysia. This dataset is publicly available via [Kaggle](https://www.kaggle.com/datasets/shariful07/student-mental-health), and contains the following features:
+
+
+  * `Timestamp` - time at which the survey was completed
+  * `Choose your gender` - gender (male or female) of the participant
+  * `Age` - age of the participant at the time of survey completion
+  * `What is your course?` - program in which the participant is majoring
+  * `Your current year of Study` - how many years the participant has attended university
+  * `What is your CGPA?` - current grade point average (or the ratio of grade points earned to grade points attempted), calculated on a 0.0-4.0 scale
+  * `Marital Status` - describes whether or not the participant is married
+  * `Do you have Depression?` - states whether or not the participant has depression
+  * `Do you have Anxiety?` - states whether or not the participant has anxiety
+  * `Do you have Panic attacks?` - states whether or not the participant experiences panic attacks
+  * `Did you seek any specialist for a treatment?` - states whether or not the participant sought professional treatment for any mental health concerns
+
+```{r}
+studentData_df <- read.csv(file="./StudentMentalHealth.csv")
+#str(studentData_df)
+summary(studentData_df)
+#pander(studentData_df)
+```
+
+## Data Cleaning
+We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, no such values were found.
+
+In order to further facilitate our analysis of this data, we deemed it appropriate to drop the "Timestamp" column, as it provided no relevant information to what we were looking for and seemed to be more of a vanity metric for the circumstances in which the data was originally acquired.
+
+```{r}
+studentData_df = subset(studentData_df, select = -c(1))
+summary(studentData_df)
+```
+
+
+## Data Wrangling
+
+### Renaming Columns
+Wrangling for the most part consisted of making the data look more presentable and easier to parse for our exploratory analysis and display purposes. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns; for these reasons we gave the each column a less verbose name that still unambiguously indicated what data said column held. 
+
+  * `Choose.your.gender` becomes simply `Gender`
+  * `Age` - age of the participant at the time of survey completion
+  * `What.is.your.course.` - is simplified into `Major`
+  * `Your.current.year.of.Study` - has been summarily shortened to `Year`
+  * `What.is.your.CGPA.` - similarly shortened to just `GPA`
+
+The following attributes have been shortened to just their respective affects. It is assumed that the names are preceeded by, "is," or, "has," before each condition (i.e. "has Anxiety).
+
+  * `Marital.status` becomes `Married`
+  * `Do.you.have.Depression.` becomes `Depressed`
+  * `Do.you.have.Anxiety.` becomes `Anxiety`
+  * `Do.you.have.Panic.attack.` becomes `Panic`
+  * `Did.you.seek.any.specialist.for.a.treatment.` becomes `Treatment`
+  
+With all of these, we were seeking the simplicity of single word names.
+```{r}
+colnames(studentData_df)[colnames(studentData_df) == 'Choose.your.gender'] <- 'Gender'
+colnames(studentData_df)[colnames(studentData_df) == 'What.is.your.course.'] <- 'Major'
+colnames(studentData_df)[colnames(studentData_df) == 'Your.current.year.of.Study'] <- 'Year'
+colnames(studentData_df)[colnames(studentData_df) == 'What.is.your.CGPA.'] <- 'GPA'
+colnames(studentData_df)[colnames(studentData_df) == 'Marital.status'] <- 'Married'
+colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Depression.'] <- 'Depressed'
+colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Anxiety.'] <- 'Anxiety'
+colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Panic.attack.'] <- 'Panic'
+colnames(studentData_df)[colnames(studentData_df) == 'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
+pander(studentData_df)
+```
+
+### Categorizing ambiguous data
+
+Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset.
+```{r}
+#code for that
+```
+
+## Exploratory Data Analysis
+
+### Age Distribution
+The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. The mean is approximately (add mean!).
+
+```{r}
+#boxplot(studentData_df$age) #jim - i can't figure this out haha i am so sorry
+```
+
+### CGPA Distribution
+The following histogram shows the frequency of each CGPA interval for participants. Most participants have a CGPA within the range of (add mode!).
+
+```{r}
+#hist(studentData_df$cgpa) #can't do this until data has been wrangled
+```
+
+### Something with the STEM major vs mental health (depression and anxiety and panic)
+Jim- i can't do this until data has been wrangled. i think one of those matrix things could work for this one
+
+### Something to do with gpa vs depression
+Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x gpa range
+
+### Something to do with year in school vs panic attacks
+Jim - same thing again, i definitely think a normal plot for this one
+
+## Conclusions
+Should answer the following questions:
+
+Are there any unexpected patterns or relationships in your data?
+Does there appear to be any cause/effect phenomena? Can you suggest hypotheses for these relationships?
+Which variables are important?
+Does the data contain any anomalies or outliers?
+What assumptions are you making about the data, and can you verify these speculations?
+
+Jim - i can write this after all of the data has been wrangled and charts have been made :)
+thank you!! <3
+
