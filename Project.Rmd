@@ -40,9 +40,13 @@ summary(studentData_df)
 ```
 
 ## Data Cleaning
-We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, no such values were found.
+We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, only one column was found to have any missing data: `Age`. Though it is not particularly robust, we opted to fill in this missing data with a simple mean of the column.
 
-In order to further facilitate our analysis of this data, we deemed it appropriate to drop the "Timestamp" column, as it provided no relevant information to what we were looking for and seemed to be more of a vanity metric for the circumstances in which the data was originally acquired.
+```{r}
+studentData_df$Age[is.na(studentData_df$Age)] <- floor(mean(studentData_df$Age, na.rm=TRUE))
+```
+
+In order to further facilitate our analysis of this data, we deemed it appropriate to drop the `Timestamp` column, as it provided no relevant information to what we were looking for and seemed to be more of a vanity metric for the circumstances in which the data was originally acquired.
 
 ```{r}
 studentData_df = subset(studentData_df, select = -c(1))
@@ -80,37 +84,58 @@ colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Depression.'] 
 colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Anxiety.'] <- 'Anxiety'
 colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Panic.attack.'] <- 'Panic'
 colnames(studentData_df)[colnames(studentData_df) == 'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
-pander(studentData_df)
 ```
 
 ### Categorizing ambiguous data
 
-Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset.
+Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`.
 ```{r}
-#code for that
+studentData_df['STEM'] <- c('Yes','No','Yes','No','Yes','Yes','No','Yes','No','No',
+                            'Yes','Yes','Yes','Yes','No','Yes','No','No','Yes','Yes',
+                            'Yes','Yes','Yes','Yes','Yes','No','Yes','Yes','Yes','Yes',
+                            'No','Yes','Yes','Yes','Yes','Yes','No','Yes','No','Yes',
+                            'Yes','Yes','No','Yes','No','Yes','Yes','Yes','Yes','Yes',
+                            'No','Yes','Yes','Yes','Yes','Yes','No','No','Yes','No',
+                            'Yes','Yes','Yes','Yes','Yes','No','Yes','No','No','Yes',
+                            'Yes','No','Yes','Yes','Yes','Yes','Yes','No','Yes','Yes',
+                            'No','No','Yes','No','Yes','Yes','No','Yes','Yes','Yes',
+                            'No','Yes','Yes','No','No','No','Yes','Yes','No','No',
+                            'Yes')
+pander(studentData_df)
 ```
 
 ## Exploratory Data Analysis
 
 ### Age Distribution
-The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. The mean is approximately (add mean!).
+The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. 20.52.
 
 ```{r}
-#boxplot(studentData_df$age) #jim - i can't figure this out haha i am so sorry
+boxplot(studentData_df$Age, horizontal = TRUE)
+summary(studentData_df$Age)
 ```
 
 ### CGPA Distribution
 The following histogram shows the frequency of each CGPA interval for participants. Most participants have a CGPA within the range of (add mode!).
 
 ```{r}
-#hist(studentData_df$cgpa) #can't do this until data has been wrangled
+gpaTable <- table(studentData_df$GPA)
+barplot(gpaTable)
 ```
 
 ### Something with the STEM major vs mental health (depression and anxiety and panic)
 Jim- i can't do this until data has been wrangled. i think one of those matrix things could work for this one
 
+```{r}
+addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$STEM)))
+addmargins(with(studentData_df, table(studentData_df$Depressed, studentData_df$STEM)))
+```
+
 ### Something to do with gpa vs depression
 Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x gpa range
+
+```{r}
+studentData_corr <- cor(table(studentData_df))
+```
 
 ### Something to do with year in school vs panic attacks
 Jim - same thing again, i definitely think a normal plot for this one
