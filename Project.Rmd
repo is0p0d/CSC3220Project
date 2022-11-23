@@ -191,7 +191,7 @@ stemAnxioustable <- addmargins(with(studentData_df, table(studentData_df$STEM,
 pander(stemAnxioustable, style = "grid", caption = "Anxious Students by Major")
 ```
 
-Anxiety is less prevalent among the students who were polled for this data set, but only just at `r round((stemAnxioustable[3,2]/stemAnxioustable[3,3])*100, 2)`% 
+Anxiety is less prevalent among the students who were polled for this data set, but only just at `r round((stemAnxioustable[3,2]/stemAnxioustable[3,3])*100, 2)`% Though anxiety among STEM majors is significantly higher at `r round((stemAnxioustable[2,2]/stemAnxioustable[2,3])*100, 2)`%, and significantly lower at `r round((stemAnxioustable[1,2]/stemAnxioustable[1,3])*100, 2)`% in non-STEM majors.
 
 ```{r}
 barplot (with(studentData_df, table(studentData_df$STEM, 
