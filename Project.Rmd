@@ -134,7 +134,7 @@ Below we can see displayed in a contingency table two key aspects of our data se
 
 ```{r}
 genderSTEMtable <- addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$STEM), keepAttrs = TRUE))
-pandoc.table(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
+pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 ```
 
 The data we're working with indicates that `r (genderSTEMtable[1,2]/genderSTEMtable[1,3])*100`% of all female students are in STEM, while `r (genderSTEMtable[2,2]/genderSTEMtable[2,3])*100`% of all male students represented are majoring in some STEM field.
@@ -144,7 +144,7 @@ Given that our data is so heavily skewed in samples toward females, it would be 
 
 ```{r}
 genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed), keepAttrs = TRUE))
-pandoc.table(genderDepressedtable, style = "grid", caption = "Depressed Students by Gender")
+pander(genderDepressedtable, style = "grid", caption = "Depressed Students by Gender")
 ```
 
 The data we're working with indicates that `r (genderDepressedtable[1,2]/genderDepressedtable[1,3])*100`% of all female students reported as depressed, while `r (genderDepressedtable[2,2]/genderDepressedtable[2,3])*100`% of all male students indicated in the survey that they are depressed.
@@ -157,7 +157,7 @@ Perhaps a more relevant exploration of this data, especially for the purposes of
 
 ```{r}
 stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed), keepAttrs = TRUE))
-pandoc.table(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
+pander(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
 ```
 
 ```{r}
@@ -169,7 +169,7 @@ Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x 
 
 ```{r}
 gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, studentData_df$Depressed), keepAttrs = TRUE)
-pandoc.table(gpaDepressiontable, style = "grid", caption = "Depressed Students by GPA")
+pander(gpaDepressiontable, style = "grid", caption = "Depressed Students by GPA")
 ```
 
 ```{r}
@@ -180,7 +180,7 @@ barplot (t(gpaDepressiontable), horiz=FALSE, ylab = "Number of Students", xlab =
 
 ```{r}
 yearPanictable <- with(studentData_df, table(studentData_df$Year, studentData_df$Panic), keepAttrs = TRUE)
-pandoc.table(yearPanictable, style = "grid", caption = "Panic in Students by Year")
+pander(yearPanictable, style = "grid", caption = "Panic in Students by Year")
 ```
 
 ```{r}
@@ -199,3 +199,8 @@ What assumptions are you making about the data, and can you verify these specula
 Jim - i can write this after all of the data has been wrangled and charts have been made :)
 thank you!! <3
 
+## Appendix A - Data
+
+```{r}
+pander(studentData_df, title = "Mental Health in University Students", sub = "Samples obtained by the International Islamic University in Malaysia")
+```
