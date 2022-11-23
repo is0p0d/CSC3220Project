@@ -65,7 +65,7 @@ studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current
 For both exploratory analysis and display purposes, data wrangling consisted of making the data look more presentable and easier to parse. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns. To resolve this, we gave each column a less-verbose name that still unambiguously indicates what data said column held. 
 
   * `Choose.your.gender` becomes simply `Gender`
-  * `Age` - age of the participant at the time of survey completion
+  * `Age` - satisifies our requirements already.
   * `What.is.your.course.` - is simplified into `Major`
   * `Your.current.year.of.Study` - is shortened to `Year`
   * `What.is.your.CGPA.` - is shortened to `GPA`
