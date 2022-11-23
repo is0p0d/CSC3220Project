@@ -80,15 +80,24 @@ The following attributes have been shortened to just their respective affects. I
   
 With all of these, we were seeking the simplicity of single word names.
 ```{r}
-colnames(studentData_df)[colnames(studentData_df) == 'Choose.your.gender'] <- 'Gender'
-colnames(studentData_df)[colnames(studentData_df) == 'What.is.your.course.'] <- 'Major'
-colnames(studentData_df)[colnames(studentData_df) == 'Your.current.year.of.Study'] <- 'Year'
-colnames(studentData_df)[colnames(studentData_df) == 'What.is.your.CGPA.'] <- 'GPA'
-colnames(studentData_df)[colnames(studentData_df) == 'Marital.status'] <- 'Married'
-colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Depression.'] <- 'Depressed'
-colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Anxiety.'] <- 'Anxiety'
-colnames(studentData_df)[colnames(studentData_df) == 'Do.you.have.Panic.attack.'] <- 'Panic'
-colnames(studentData_df)[colnames(studentData_df) == 'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Choose.your.gender'] <- 'Gender'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'What.is.your.course.'] <- 'Major'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Your.current.year.of.Study'] <- 'Year'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'What.is.your.CGPA.'] <- 'GPA'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Marital.status'] <- 'Married'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Do.you.have.Depression.'] <- 'Depressed'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Do.you.have.Anxiety.'] <- 'Anxiety'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Do.you.have.Panic.attack.'] <- 'Panic'
+colnames(studentData_df)[colnames(studentData_df) == 
+                           'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
 ```
 
 ### Categorizing ambiguous data
@@ -133,7 +142,8 @@ barplot(gpaTable)
 Below we can see displayed in a contingency table two key aspects of our data set. Represented in the rows is the distribution of male and female students, with the columns showing how many of each are majoring in a STEM field or not. With the "Sum" features of this table we can see that nearly 75 percent of our student sample is female, with just over two thirds of all students majoring in some STEM field. This could indicate that we are not accurately representing both males and females with this data, this will be kept in mind moving forward.
 
 ```{r}
-genderSTEMtable <- addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$STEM), keepAttrs = TRUE))
+genderSTEMtable <- addmargins(with(studentData_df, 
+                                   table(studentData_df$Gender, studentData_df$STEM)))
 pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 ```
 
@@ -143,37 +153,46 @@ The data we're working with indicates that `r (genderSTEMtable[1,2]/genderSTEMta
 Given that our data is so heavily skewed in samples toward females, it would be interesting to take a look at how self reported depression stacks up by both gender and major. Below is once again a contingency table that represents gender by row and whether or not the student reported as depressed by column.
 
 ```{r}
-genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed), keepAttrs = TRUE))
+genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gender, 
+                                                              studentData_df$Depressed)))
 pander(genderDepressedtable, style = "grid", caption = "Depressed Students by Gender")
 ```
 
 The data we're working with indicates that `r (genderDepressedtable[1,2]/genderDepressedtable[1,3])*100`% of all female students reported as depressed, while `r (genderDepressedtable[2,2]/genderDepressedtable[2,3])*100`% of all male students indicated in the survey that they are depressed.
 
 ```{r}
-barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed)), horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", legend.text = TRUE, args.legend = list(title = "Gender"))
+barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed)), 
+         horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", 
+         legend.text = TRUE, args.legend = list(title = "Gender"))
 ```
 
 Perhaps a more relevant exploration of this data, especially for the purposes of this survey, would be the relationship between being a STEM major and reporting as Depressed. Our table below once again represents whether a student is depressed or not by column, but this time the rows give us the quality of being in a STEM related major.
 
 ```{r}
-stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed), keepAttrs = TRUE))
+stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM, 
+                                                            studentData_df$Depressed)))
 pander(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
 ```
 
 ```{r}
-barplot (with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed)), horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", legend.text = TRUE, args.legend = list(title = "STEM"))
+barplot (with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed)), 
+         horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", 
+         legend.text = TRUE, args.legend = list(title = "STEM"))
 ```
 
 ### Something to do with gpa vs depression
 Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x gpa range
 
 ```{r}
-gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, studentData_df$Depressed), keepAttrs = TRUE)
+gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, 
+                                                 studentData_df$Depressed))
 pander(gpaDepressiontable, style = "grid", caption = "Depressed Students by GPA")
 ```
 
 ```{r}
-barplot (t(gpaDepressiontable), horiz=FALSE, ylab = "Number of Students", xlab = "GPA Range", legend.text = TRUE, args.legend = list(title = "Depressed"))
+barplot (t(gpaDepressiontable), 
+         horiz=FALSE, ylab = "Number of Students", xlab = "GPA Range", 
+         legend.text = TRUE, args.legend = list(title = "Depressed"))
 ```
 
 ### Something to do with year in school vs panic attacks
@@ -184,7 +203,9 @@ pander(yearPanictable, style = "grid", caption = "Panic in Students by Year")
 ```
 
 ```{r}
-barplot (t(yearPanictable), horiz=FALSE, ylab = "Number of Students", xlab = "Year of Study", legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
+barplot (t(yearPanictable), 
+         horiz=FALSE, ylab = "Number of Students", xlab = "Year of Study", 
+         legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
 ```
 
 ## Conclusions
@@ -202,5 +223,5 @@ thank you!! <3
 ## Appendix A - Data
 
 ```{r}
-pander(studentData_df, title = "Mental Health in University Students", sub = "Samples obtained by the International Islamic University in Malaysia")
+pander(studentData_df, caption = "Mental Health in University Students")
 ```
