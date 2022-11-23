@@ -1,5 +1,5 @@
 ---
-title: "Survery on Mental Health Across Programs of Study in University"
+title: "Survey on Mental Health Across Programs of Study in University"
 author: "Mental Health Maniacs - Deanna King, Jim Moroney, Pooja Patel, Christopher Wilhite"
 date: "`r Sys.Date()`"
 output: pdf_document
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ## Packages
-In order to better interpret the dataset, we utilize the `pander` package for table creation and manipulation. Likewise, we use `insert other packages` for `insert reasoning`.
+In order to better interpret the dataset, we utilize the `pander` package for table creation and manipulation.
 
 ```{r, message=FALSE}
 library(pander)
@@ -40,20 +40,20 @@ summary(studentData_df)
 ```
 
 ## Data Cleaning
-We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, only one column was found to have any missing data: `Age`. Though it is not particularly robust, we opted to fill in this missing data with a simple mean of the column.
+We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, only one column was found to have any missing data: `Age`. Though it is not particularly robust, we opted to fill in this missing data with the mean of the column.
 
 ```{r}
 studentData_df$Age[is.na(studentData_df$Age)] <- floor(mean(studentData_df$Age, na.rm=TRUE))
 ```
 
-In order to further facilitate our analysis of this data, we deemed it appropriate to drop the `Timestamp` column, as it provided no relevant information to what we were looking for and seemed to be more of a vanity metric for the circumstances in which the data was originally acquired.
+In order to further facilitate our analysis of this data, we deemed it appropriate to drop the `Timestamp` column, as it provided no relevant information. It seemed to be more of a vanity metric for the circumstances in which the data was originally acquired.
 
 ```{r}
 studentData_df = subset(studentData_df, select = -c(1))
 summary(studentData_df)
 ```
 
-Due to the method in which this survey was conducted, some features of the data were able to be entered in an non-deterministic manner. The column `Your.current.year.of.Study` suffers from this the most, as random capitalization in the responses creates several different "bins" of responses for data that is otherwise meant to be the same. To fix this, we elected to simple cast all characters in this column to an uppercase state to remove any ambiguity.
+Due to the method in which this survey was conducted, some features of the data were able to be entered in an non-deterministic manner. The column `Your.current.year.of.Study` exhibits this the most, as random capitalization in the responses creates several different "bins" of responses for data that is otherwise meant to be the same. To fix this, we elected to simple cast all characters in this column to an uppercase state to remove any ambiguity.
 
 ```{r}
 studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current.year.of.Study)
@@ -62,15 +62,15 @@ studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current
 ## Data Wrangling
 
 ### Renaming Columns
-Wrangling for the most part consisted of making the data look more presentable and easier to parse for our exploratory analysis and display purposes. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns; for these reasons we gave the each column a less verbose name that still unambiguously indicated what data said column held. 
+For both exploratory analysis and display purposes, data wrangling consisted of making the data look more presentable and easier to parse. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns. To resolve this, we gave each column a less-verbose name that still unambiguously indicates what data said column held. 
 
   * `Choose.your.gender` becomes simply `Gender`
   * `Age` - age of the participant at the time of survey completion
   * `What.is.your.course.` - is simplified into `Major`
-  * `Your.current.year.of.Study` - has been summarily shortened to `Year`
-  * `What.is.your.CGPA.` - similarly shortened to just `GPA`
+  * `Your.current.year.of.Study` - is shortened to `Year`
+  * `What.is.your.CGPA.` - is shortened to `GPA`
 
-The following attributes have been shortened to just their respective affects. It is assumed that the names are preceeded by, "is," or, "has," before each condition (i.e. "has Anxiety).
+The following attributes have been shortened to just their respective affects. It is assumed that the names are preceded by either "is" or "has" before each condition (i.e. "has Anxiety).
 
   * `Marital.status` becomes `Married`
   * `Do.you.have.Depression.` becomes `Depressed`
@@ -100,9 +100,9 @@ colnames(studentData_df)[colnames(studentData_df) ==
                            'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
 ```
 
-### Categorizing ambiguous data
+### Categorizing Ambiguous Data
 
-Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`. We have included the first 5 rows as a sample of the data set, full data set is listed in Appendix A at the end of this document.
+Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors, and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately, there is no easy algorithmic way to do this; we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it would be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`. We have included the first 5 rows as a sample of the data set, and the full data set is listed in Appendix A at the end of this document.
 ```{r}
 studentData_df['STEM'] <- c('Yes','No','Yes','No','Yes','Yes','No','Yes','No','No',
                             'Yes','Yes','Yes','Yes','No','Yes','No','No','Yes','Yes',
@@ -136,10 +136,10 @@ gpaTable <- table(studentData_df$GPA)
 barplot(gpaTable)
 ```
 
-## A look at key data characteristics
+## Analysis of Key Data Characteristics
 
 ### Distribution of Gender and Major
-Below we can see displayed in a contingency table two key aspects of our data set. Represented in the rows is the distribution of male and female students, with the columns showing how many of each are majoring in a STEM field or not. With the "Sum" features of this table we can see that nearly 75 percent of our student sample is female, with just over two thirds of all students majoring in some STEM field. This could indicate that we are not accurately representing both males and females with this data, this will be kept in mind moving forward.
+Below we can see two key aspects of our data set displayed in a contingency table. Represented in the rows is the distribution of male and female students, with the columns showing how many of each are majoring in a STEM field or not. With the "Sum" features of this table, we can see that nearly 75 percent of our student sample is female, with just over two thirds of all students majoring in some STEM field. This could indicate that we are not accurately representing both males and females with this data, and this will be kept in mind moving forward.
 
 ```{r}
 genderSTEMtable <- addmargins(with(studentData_df, 
@@ -150,7 +150,7 @@ pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 The data we're working with indicates that `r round((genderSTEMtable[1,2]/genderSTEMtable[1,3])*100,2)`% of all female students are in STEM, while `r round((genderSTEMtable[2,2]/genderSTEMtable[2,3])*100,2)`% of all male students represented are majoring in some STEM field.
 
 ### Mental Health by Gender and Major
-Given that our data is so heavily skewed in samples toward females, it would be interesting to take a look at how self reported depression stacks up by both gender and major. Below is once again a contingency table that represents gender by row and whether or not the student reported as depressed by column.
+Given that our data is so heavily skewed in samples toward females, we decided to analyze how self-reported depression stacks up by both gender and major. Below is a contingency table that represents gender by row, and whether or not the student reported as depressed by column.
 
 ```{r}
 genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gender, 
@@ -183,7 +183,7 @@ barplot (with(studentData_df, table(studentData_df$STEM,
          legend.text = TRUE, args.legend = list(title = "STEM"))
 ```
 
-We can also look at mental health affects outside of depression, for instance, this table gives us STEM major by row and whether a student reported having anxiety attacks or not by column.
+We can also look at mental health affects outside of depression. For instance, this table gives us STEM major by row and whether a student reported having anxiety attacks or not by column.
 
 ```{r}
 stemAnxioustable <- addmargins(with(studentData_df, table(studentData_df$STEM, 
@@ -200,11 +200,11 @@ barplot (with(studentData_df, table(studentData_df$STEM,
          legend.text = TRUE, args.legend = list(title = "STEM"))
 ```
 
-In all of these fields the bar plots serve to give a sense of scale in the sampled populations, and gives a rough idea of what ratio one could expect from a given sample analysis.
+In all of these fields, the bar plots serve to give a sense of scale in the sampled populations, and gives a rough idea of what ratio one could expect from a given sample analysis.
 
 ### Relating GPA to Depression
 
-In the rows of this we have several ranges of GPA that students were allowed to choose from, the columns once again show whether or not a student is depressed.
+The rows of the following table contain several ranges of GPA that represents the sample, and the columns once again show whether or not a student is depressed.
 
 ```{r}
 gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, 
@@ -220,7 +220,7 @@ barplot (t(gpaDepressiontable),
 ```
 
 ### Progression in College and Panic Attacks
-
+To determine if a relationship exists between the features `Year` and `Panic`, we analyzed the following materials:
 ```{r}
 yearPanictable <- with(studentData_df, table(studentData_df$Year, 
                                              studentData_df$Panic), keepAttrs = TRUE)
@@ -235,16 +235,14 @@ barplot (t(yearPanictable),
 ```
 
 ## Conclusions and Objectives
-Should answer the following questions:
+Upon extensive analysis of the dataset, we determined that the features `GPA`, `Major`, and `Year` will be most important in predicting the presence of mental health disorders. There are no obvious outliers or unexpected patterns in the dataset, but our analysis proved that a disproportionate amount of STEM majors and Females exist in the sample. The following hypotheses were drawn as a result:
 
-Are there any unexpected patterns or relationships in your data?
-Does there appear to be any cause/effect phenomena? Can you suggest hypotheses for these relationships?
-Which variables are important?
-Does the data contain any anomalies or outliers?
-What assumptions are you making about the data, and can you verify these speculations?
+1. A cause/effect relationship exists between a student's GPA and the prevalence of Depression
+2. Students majoring in STEM fields are more likely to have anxiety than depression
+3. The number of years in which a student has attended college does not have an effect on the prevalence of panic attacks
 
+During the next phase of analysis, we plan on using statistical methods to determine the accuracy of our hypotheses. Machine learning algorithms do not appear necessary at the moment; we may decide to integrate machine learning techniques as we proceed.
 
-Deanna - We should include here that we intend to determine in Phase 2 of this report through statistical methods whether or not an individual is more likely to be affected by mental health detriments based on whether or not they're in STEM. I do not foresee us using any machine learning.
 
 ## Appendix A - Data
 
