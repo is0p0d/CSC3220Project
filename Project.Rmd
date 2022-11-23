@@ -53,6 +53,11 @@ studentData_df = subset(studentData_df, select = -c(1))
 summary(studentData_df)
 ```
 
+Due to the method in which this survey was conducted, some features of the data were able to be entered in an non-deterministic manner. The column `Your.current.year.of.Study` suffers from this the most, as random capitalization in the responses creates several different "bins" of responses for data that is otherwise meant to be the same. To fix this, we elected to simple cast all characters in this column to an uppercase state to remove any ambiguity.
+
+```{r}
+studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current.year.of.Study)
+```
 
 ## Data Wrangling
 
@@ -88,7 +93,7 @@ colnames(studentData_df)[colnames(studentData_df) == 'Did.you.seek.any.specialis
 
 ### Categorizing ambiguous data
 
-Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`. We have included the first 5 
+Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately there is no easy algorithmic way to do this, we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it'd be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`. We have included the first 5 rows as a sample of the data set, full data set is listed in Appendix A at the end of this document.
 ```{r}
 studentData_df['STEM'] <- c('Yes','No','Yes','No','Yes','Yes','No','Yes','No','No',
                             'Yes','Yes','Yes','Yes','No','Yes','No','No','Yes','Yes',
@@ -104,9 +109,9 @@ studentData_df['STEM'] <- c('Yes','No','Yes','No','Yes','Yes','No','Yes','No','N
 pander(studentData_df[1:5,])
 ```
 
-## Exploratory Data Analysis
+# Exploratory Data Analysis
 
-### Age Distribution
+## Age Distribution
 The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. Given that our mean is `r mean(studentData_df$Age)`, we can be assured that our data is fairly representative of the average college student.
 
 ```{r}
@@ -114,7 +119,7 @@ boxplot(studentData_df$Age, horizontal = TRUE)
 summary(studentData_df$Age)
 ```
 
-### CGPA Distribution
+## CGPA Distribution
 The following histogram shows the frequency of each CGPA interval for participants. Most participants have a CGPA within the range of `r median(studentData_df$GPA)`.
 
 ```{r}
@@ -140,27 +145,47 @@ Given that our data is so heavily skewed in samples toward females, it would be 
 ```{r}
 genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed), keepAttrs = TRUE))
 pandoc.table(genderDepressedtable, style = "grid", caption = "Depressed Students by Gender")
-
-#attach(studentData_df)
-#bindTable <- table(Depressed, STEM)
-#barplot((bindTable['Freq']/bindTable['Depressed']), horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", legend.text = TRUE )
-#detach(studentData_df)
 ```
 
 The data we're working with indicates that `r (genderDepressedtable[1,2]/genderDepressedtable[1,3])*100`% of all female students reported as depressed, while `r (genderDepressedtable[2,2]/genderDepressedtable[2,3])*100`% of all male students indicated in the survey that they are depressed.
+
+```{r}
+barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed)), horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", legend.text = TRUE, args.legend = list(title = "Gender"))
+```
+
+Perhaps a more relevant exploration of this data, especially for the purposes of this survey, would be the relationship between being a STEM major and reporting as Depressed. Our table below once again represents whether a student is depressed or not by column, but this time the rows give us the quality of being in a STEM related major.
+
+```{r}
+stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed), keepAttrs = TRUE))
+pandoc.table(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
+```
+
+```{r}
+barplot (with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed)), horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", legend.text = TRUE, args.legend = list(title = "STEM"))
+```
 
 ### Something to do with gpa vs depression
 Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x gpa range
 
 ```{r}
+gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, studentData_df$Depressed), keepAttrs = TRUE)
+pandoc.table(gpaDepressiontable, style = "grid", caption = "Depressed Students by GPA")
+```
 
-#binnedGPA_df = studentData_df.filter('GPA', 'Depressed', axis=1)
-#pander(binnedGPA_df)
-
+```{r}
+barplot (t(gpaDepressiontable), horiz=FALSE, ylab = "Number of Students", xlab = "GPA Range", legend.text = TRUE, args.legend = list(title = "Depressed"))
 ```
 
 ### Something to do with year in school vs panic attacks
-Jim - same thing again, i definitely think a normal plot for this one
+
+```{r}
+yearPanictable <- with(studentData_df, table(studentData_df$Year, studentData_df$Panic), keepAttrs = TRUE)
+pandoc.table(yearPanictable, style = "grid", caption = "Panic in Students by Year")
+```
+
+```{r}
+barplot (t(yearPanictable), horiz=FALSE, ylab = "Number of Students", xlab = "Year of Study", legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
+```
 
 ## Conclusions
 Should answer the following questions:
