@@ -121,7 +121,7 @@ pander(studentData_df[1:5,])
 # Exploratory Data Analysis
 
 ## Age Distribution
-The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. Given that our mean is `r mean(studentData_df$Age)`, we can be assured that our data is fairly representative of the average college student.
+The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. Given that our mean is `r round(mean(studentData_df$Age),2)`, we can be assured that our data is fairly representative of the average college student.
 
 ```{r}
 boxplot(studentData_df$Age, horizontal = TRUE)
@@ -147,9 +147,9 @@ genderSTEMtable <- addmargins(with(studentData_df,
 pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 ```
 
-The data we're working with indicates that `r (genderSTEMtable[1,2]/genderSTEMtable[1,3])*100`% of all female students are in STEM, while `r (genderSTEMtable[2,2]/genderSTEMtable[2,3])*100`% of all male students represented are majoring in some STEM field.
+The data we're working with indicates that `r round((genderSTEMtable[1,2]/genderSTEMtable[1,3])*100,2)`% of all female students are in STEM, while `r round((genderSTEMtable[2,2]/genderSTEMtable[2,3])*100,2)`% of all male students represented are majoring in some STEM field.
 
-### Depression by Gender and Major
+### Mental Health by Gender and Major
 Given that our data is so heavily skewed in samples toward females, it would be interesting to take a look at how self reported depression stacks up by both gender and major. Below is once again a contingency table that represents gender by row and whether or not the student reported as depressed by column.
 
 ```{r}
@@ -158,7 +158,7 @@ genderDepressedtable <- addmargins(with(studentData_df, table(studentData_df$Gen
 pander(genderDepressedtable, style = "grid", caption = "Depressed Students by Gender")
 ```
 
-The data we're working with indicates that `r (genderDepressedtable[1,2]/genderDepressedtable[1,3])*100`% of all female students reported as depressed, while `r (genderDepressedtable[2,2]/genderDepressedtable[2,3])*100`% of all male students indicated in the survey that they are depressed.
+The data we're working with indicates that `r round((genderDepressedtable[1,2]/genderDepressedtable[1,3])*100,2)`% of all female students reported as depressed, while `r round((genderDepressedtable[2,2]/genderDepressedtable[2,3])*100,2)`% of all male students indicated in the survey that they are depressed. This data is graphically represented in a bar chart below.
 
 ```{r}
 barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$Depressed)), 
@@ -174,19 +174,41 @@ stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM,
 pander(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
 ```
 
+Of all students surveyed, we can ascertain that `r round((stemDepressedtable[3,2]/stemDepressedtable[3,3])*100, 2)`% of them report having depression. In finer granularity, depression among STEM majors is at `r round((stemDepressedtable[2,2]/stemDepressedtable[2,3])*100, 2)`%, and `r round((stemDepressedtable[1,2]/stemDepressedtable[1,3])*100, 2)`% in non-STEM majors.
+
 ```{r}
-barplot (with(studentData_df, table(studentData_df$STEM, studentData_df$Depressed)), 
+barplot (with(studentData_df, table(studentData_df$STEM, 
+                                    studentData_df$Depressed)), 
          horiz=TRUE, xlab = "Number of Students", ylab = "Are you Depressed?", 
          legend.text = TRUE, args.legend = list(title = "STEM"))
 ```
 
-### Something to do with gpa vs depression
-Jim - same thing as above, maybe a normal plot? stacked box plot, y depressed x gpa range
+We can also look at mental health affects outside of depression, for instance, this table gives us STEM major by row and whether a student reported having anxiety attacks or not by column.
+
+```{r}
+stemAnxioustable <- addmargins(with(studentData_df, table(studentData_df$STEM, 
+                                                            studentData_df$Anxiety)))
+pander(stemAnxioustable, style = "grid", caption = "Anxious Students by Major")
+```
+
+Anxiety is less prevalent among the students who were polled for this data set, but only just at `r round((stemAnxioustable[3,2]/stemAnxioustable[3,3])*100, 2)`% 
+
+```{r}
+barplot (with(studentData_df, table(studentData_df$STEM, 
+                                    studentData_df$Anxiety)), 
+         horiz=TRUE, xlab = "Number of Students", ylab = "Are you Anxious?", 
+         legend.text = TRUE, args.legend = list(title = "STEM"))
+```
+
+### Relating GPA to Depression
+
+In the rows of this we have several ranges of GPA that students were allowed to choose from, the columns once again show whether or not a student is depressed.
 
 ```{r}
 gpaDepressiontable <- with(studentData_df, table(studentData_df$GPA, 
                                                  studentData_df$Depressed))
-pander(gpaDepressiontable, style = "grid", caption = "Depressed Students by GPA")
+gpaDepTotals <- addmargins(gpaDepressiontable)
+pander(gpaDepTotals, style = "grid", caption = "Depressed Students by GPA")
 ```
 
 ```{r}
@@ -195,11 +217,13 @@ barplot (t(gpaDepressiontable),
          legend.text = TRUE, args.legend = list(title = "Depressed"))
 ```
 
-### Something to do with year in school vs panic attacks
+### Progression in College and Panic Attacks
 
 ```{r}
-yearPanictable <- with(studentData_df, table(studentData_df$Year, studentData_df$Panic), keepAttrs = TRUE)
-pander(yearPanictable, style = "grid", caption = "Panic in Students by Year")
+yearPanictable <- with(studentData_df, table(studentData_df$Year, 
+                                             studentData_df$Panic), keepAttrs = TRUE)
+yrPanTotals <- addmargins(yearPanictable)
+pander(yrPanTotals, style = "grid", caption = "Panic in Students by Year")
 ```
 
 ```{r}
@@ -208,7 +232,7 @@ barplot (t(yearPanictable),
          legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
 ```
 
-## Conclusions
+## Conclusions and Objectives
 Should answer the following questions:
 
 Are there any unexpected patterns or relationships in your data?
@@ -217,8 +241,8 @@ Which variables are important?
 Does the data contain any anomalies or outliers?
 What assumptions are you making about the data, and can you verify these speculations?
 
-Jim - i can write this after all of the data has been wrangled and charts have been made :)
-thank you!! <3
+
+Deanna - We should include here that we intend to determine in Phase 2 of this report through statistical methods whether or not an individual is more likely to be affected by mental health detriments based on whether or not they're in STEM. I do not foresee us using any machine learning.
 
 ## Appendix A - Data
 
