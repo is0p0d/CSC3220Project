@@ -65,7 +65,7 @@ studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current
 For both exploratory analysis and display purposes, data wrangling consisted of making the data look more presentable and easier to parse. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns. To resolve this, we gave each column a less-verbose name that still unambiguously indicates what data said column held. 
 
   * `Choose.your.gender` becomes simply `Gender`
-  * `Age` - satisifies our requirements already.
+  * `Age` - satisfies our requirements already.
   * `What.is.your.course.` - is simplified into `Major`
   * `Your.current.year.of.Study` - is shortened to `Year`
   * `What.is.your.CGPA.` - is shortened to `GPA`
@@ -234,14 +234,8 @@ barplot (t(yearPanictable),
          legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
 ```
 
-## Conclusions and Objectives
-Upon extensive analysis of the dataset, we determined that the features `GPA`, `Major`, and `Year` will be most important in predicting the presence of mental health disorders. There are no obvious outliers or unexpected patterns in the dataset, but our analysis proved that a disproportionate amount of STEM majors and Females exist in the sample. The following hypotheses were drawn as a result:
-
-1. A cause/effect relationship exists between a student's GPA and the prevalence of Depression
-2. Students majoring in STEM fields are more likely to have anxiety than depression
-3. The number of years in which a student has attended college does not have an effect on the prevalence of panic attacks
-
-During the next phase of analysis, we plan on using statistical methods to determine the accuracy of our hypotheses. Machine learning algorithms do not appear necessary at the moment; we may decide to integrate machine learning techniques as we proceed.
+## Drawing Conclusions from this Data
+Due to the relative simplicity of our data, drawing meaningful interpretations from it can be achieved with relatively simple statistical methods. Principally, we'd like to see if there's any correlation with these various afflictions and being in STEM. More importantly we'd like to be able to say with any degree of confidence how likely and individual 
 
 
 ## Appendix A - Data
