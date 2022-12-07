@@ -135,7 +135,6 @@ The following histogram shows the frequency of each CGPA interval for participan
 gpaTable <- table(studentData_df$GPA)
 barplot(gpaTable)
 ```
-
 ## 4.3 Analysis of Key Data Characteristics
 
 ### 4.3.1 Distribution of Gender and Major
@@ -148,6 +147,11 @@ pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 ```
 
 The data we're working with indicates that `r round((genderSTEMtable[1,2]/genderSTEMtable[1,3])*100,2)`% of all female students are in STEM, while `r round((genderSTEMtable[2,2]/genderSTEMtable[2,3])*100,2)`% of all male students represented are majoring in some STEM field.
+```{r}
+barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$STEM)), 
+         horiz=TRUE, xlab = "Number of Students", ylab = "STEM", 
+         legend.text = TRUE, args.legend = list(title = "Gender"))
+```
 
 ### 4.3.2 Mental Health by Gender and Major
 Given that our data is so heavily skewed in samples toward females, we decided to analyze how self-reported depression stacks up by both gender and major. Below is a contingency table that represents gender by row, and whether or not the student reported as depressed by column.
@@ -331,9 +335,19 @@ p_anxGstem <- (p_Anxious * p_STEM)/p_STEM
 \
 Once again our decision is reinforced by *P(Anxious | STEM)* - `r p_anxGstem`, and *P(Anxious)* - `r p_Anxious`, not satisfying our original assumption of *P(Anxious | STEM) > P(Anxious)*.
 
-## 6. Conclusions
+## 6. Conclusions and Findings
+
+The original goal of Mental Health Maniacs was to try and find a correlation between students enrolled in Science, Technology, Engineering, or Math related fields and mental illness. For the data we worked with, our team could not reasonably determine through statistical analysis a correlation between a students program of study and the likelihood that they'd be be afflicted by any of the sampled mental health issues.
 
 ### 6.1 Possible Pitfalls
+
+When considering these findings, we have to look back at the exploratory data analysis. It is the belief of our team that the amount of data we had access to for this analysis is not a representative amount in volume or composition. With nearly 75% of our data set being female, and over two thirds of all samples majoring in STEM - it's difficult to determine whether our analysis is truly representative of a general population of STEM vs non-STEM, male vs female samples.
+
+### 6.2 Possible Improvements
+
+Most of the improvements that our team recommends has to do with data collection. This data set was built from voluntary sampling using Google Forms sheets, among the things that could be improve lie-in the Google Forms format itself. Fields should be restricted, limiting user input of strings as much as possible to eliminate non determinism in responses for things like selected major, age, GPA, ect. This would, of course, require more set-up time for the individual conducting the survey, but would result in cleaner data that could potentially provide better results - not to mention cut down data cleaning and wrangling.
+
+Another element of improvement would simply be participation. Requiring participation may be problematic for quality of responses, but perhaps some sort of incentive based encouragement such as bonus credit.
 
 ## Appendix A - Data
 
