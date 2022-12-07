@@ -16,7 +16,7 @@ In order to better interpret the dataset, we utilize the `pander` package for ta
 library(pander)
 ```
 
-## Student Mental Health Data
+## 1. Student Mental Health Data
 All data required for this interpretation was obtained from the International Islamic University in Malaysia. This dataset is publicly available via [Kaggle](https://www.kaggle.com/datasets/shariful07/student-mental-health), and contains the following features:
 
 
@@ -39,7 +39,7 @@ summary(studentData_df)
 #pander(studentData_df)
 ```
 
-## Data Cleaning
+## 2. Data Cleaning
 We thoroughly examined the data to ensure that no noisy or missing data values were present. More specifically, we ensured that no negative values existed in our numerical attributes (age, year of study, CGPA), and that no missing values were present in any tuple. Upon examination, only one column was found to have any missing data: `Age`. Though it is not particularly robust, we opted to fill in this missing data with the mean of the column.
 
 ```{r}
@@ -59,9 +59,9 @@ Due to the method in which this survey was conducted, some features of the data 
 studentData_df$Your.current.year.of.Study <- toupper(studentData_df$Your.current.year.of.Study)
 ```
 
-## Data Wrangling
+## 3. Data Wrangling
 
-### Renaming Columns
+### 3.1. Renaming Columns
 For both exploratory analysis and display purposes, data wrangling consisted of making the data look more presentable and easier to parse. Through some minor idiosyncrasies of the method through which this data was obtained, lengthy and oddly formatted names currently index most of our columns. To resolve this, we gave each column a less-verbose name that still unambiguously indicates what data said column held. 
 
   * `Choose.your.gender` becomes simply `Gender`
@@ -100,7 +100,7 @@ colnames(studentData_df)[colnames(studentData_df) ==
                            'Did.you.seek.any.specialist.for.a.treatment.'] <- 'Treatment'
 ```
 
-### Categorizing Ambiguous Data
+### 3.2. Categorizing Ambiguous Data
 
 Given that we are looking for various correlations between Science, Technology, Engineering, and Mathematics (STEM) majors, and the various mental health issues that might affect them, the detailed knowledge of what major a student is enrolled in doesn't interest us as data - we only care whether or not it's considered STEM. Unfortunately, there is no easy algorithmic way to do this; we had considered using various "sounds-like" libraries and methods, but decided for a dataset this small that it would be best to just manually build a new column by hand. This included looking for what the responses from the `Major` column in our dataset correlated to and simply populating a new column with "Yes" or "No" before adding it to our dataset. We added this column as `STEM`. We have included the first 5 rows as a sample of the data set, and the full data set is listed in Appendix A at the end of this document.
 ```{r}
@@ -118,9 +118,9 @@ studentData_df['STEM'] <- c('Yes','No','Yes','No','Yes','Yes','No','Yes','No','N
 pander(studentData_df[1:5,])
 ```
 
-# Exploratory Data Analysis
+# 4. Exploratory Data Analysis
 
-## Age Distribution
+## 4.1 Age Distribution
 The following boxplot shows the distribution of each participant's age. The youngest participants are 18 years old, and the oldest are 24 years old. Given that our mean is `r round(mean(studentData_df$Age),2)`, we can be assured that our data is fairly representative of the average college student.
 
 ```{r}
@@ -128,7 +128,7 @@ boxplot(studentData_df$Age, horizontal = TRUE)
 summary(studentData_df$Age)
 ```
 
-## CGPA Distribution
+## 4.2 CGPA Distribution
 The following histogram shows the frequency of each CGPA interval for participants. Most participants have a CGPA within the range of `r median(studentData_df$GPA)`.
 
 ```{r}
@@ -136,9 +136,9 @@ gpaTable <- table(studentData_df$GPA)
 barplot(gpaTable)
 ```
 
-## Analysis of Key Data Characteristics
+## 4.3 Analysis of Key Data Characteristics
 
-### Distribution of Gender and Major
+### 4.3.1 Distribution of Gender and Major
 Below we can see two key aspects of our data set displayed in a contingency table. Represented in the rows is the distribution of male and female students, with the columns showing how many of each are majoring in a STEM field or not. With the "Sum" features of this table, we can see that nearly 75 percent of our student sample is female, with just over two thirds of all students majoring in some STEM field. This could indicate that we are not accurately representing both males and females with this data, and this will be kept in mind moving forward.
 
 ```{r}
@@ -149,7 +149,7 @@ pander(genderSTEMtable, style = "grid", caption = "STEM Majors by Gender")
 
 The data we're working with indicates that `r round((genderSTEMtable[1,2]/genderSTEMtable[1,3])*100,2)`% of all female students are in STEM, while `r round((genderSTEMtable[2,2]/genderSTEMtable[2,3])*100,2)`% of all male students represented are majoring in some STEM field.
 
-### Mental Health by Gender and Major
+### 4.3.2 Mental Health by Gender and Major
 Given that our data is so heavily skewed in samples toward females, we decided to analyze how self-reported depression stacks up by both gender and major. Below is a contingency table that represents gender by row, and whether or not the student reported as depressed by column.
 
 ```{r}
@@ -169,8 +169,9 @@ barplot (with(studentData_df, table(studentData_df$Gender, studentData_df$Depres
 Perhaps a more relevant exploration of this data, especially for the purposes of this survey, would be the relationship between being a STEM major and reporting as Depressed. Our table below once again represents whether a student is depressed or not by column, but this time the rows give us the quality of being in a STEM related major.
 
 ```{r}
-stemDepressedtable <- addmargins(with(studentData_df, table(studentData_df$STEM, 
-                                                            studentData_df$Depressed)))
+stemDepressedtableNM <- with(studentData_df, table(studentData_df$STEM, 
+                                                            studentData_df$Depressed))
+stemDepressedtable <- addmargins(stemDepressedtableNM) # NM = No margins
 pander(stemDepressedtable, style = "grid", caption = "Depressed Students by Major")
 ```
 
@@ -186,8 +187,10 @@ barplot (with(studentData_df, table(studentData_df$STEM,
 We can also look at mental health affects outside of depression. For instance, this table gives us STEM major by row and whether a student reported having anxiety attacks or not by column.
 
 ```{r}
-stemAnxioustable <- addmargins(with(studentData_df, table(studentData_df$STEM, 
-                                                            studentData_df$Anxiety)))
+
+stemAnxioustableNM <- with(studentData_df, table(studentData_df$STEM, 
+                                                            studentData_df$Anxiety))
+stemAnxioustable <- addmargins(stemAnxioustableNM)
 pander(stemAnxioustable, style = "grid", caption = "Anxious Students by Major")
 ```
 
@@ -202,7 +205,7 @@ barplot (with(studentData_df, table(studentData_df$STEM,
 
 In all of these fields, the bar plots serve to give a sense of scale in the sampled populations, and gives a rough idea of what ratio one could expect from a given sample analysis.
 
-### Relating GPA to Depression
+### 4.3.4 Relating GPA to Depression
 
 The rows of the following table contain several ranges of GPA that represents the sample, and the columns once again show whether or not a student is depressed.
 
@@ -219,7 +222,7 @@ barplot (t(gpaDepressiontable),
          legend.text = TRUE, args.legend = list(title = "Depressed"))
 ```
 
-### Progression in College and Panic Attacks
+### 4.3.5 Progression in College and Panic Attacks
 To determine if a relationship exists between the features `Year` and `Panic`, we analyzed the following materials:
 ```{r}
 yearPanictable <- with(studentData_df, table(studentData_df$Year, 
@@ -234,9 +237,103 @@ barplot (t(yearPanictable),
          legend.text = TRUE, args.legend = list(title = "Panic Attacks"))
 ```
 
-## Drawing Conclusions from this Data
-Due to the relative simplicity of our data, drawing meaningful interpretations from it can be achieved with relatively simple statistical methods. Principally, we'd like to see if there's any correlation with these various afflictions and being in STEM. More importantly we'd like to be able to say with any degree of confidence how likely and individual 
+## 5. Drawing Conclusions from this Data
+Due to the relative simplicity of our data, drawing meaningful interpretations from it can be achieved with relatively simple statistical methods. Principally, we'd like to see if there's any correlation with these various afflictions and being in STEM. More importantly we'd like to be able to say with any degree of confidence how likely an individual is to be afflicted any given mental illness given the quality of their features. 
 
+To achieve this we need to set up a series of tests, the dichotomous and categorical nature of our data suggests that methods like correlation matrices would not provide adequate insight. However, performing basic statistical analysis - such as checking for conditional probability and basing hypotheses off of the independence of the variables involved in said conditional probability - could prove to be valuable in determining the relationships we're looking for between variables.
+
+### 5.1 A Relation Between STEM and Depression
+From our `stemDepressedTable` in section `4.3.2` we can start to build probabilities. In this case, we're interested in the probability of being depressed given that an individual is a STEM major. 
+We can express this as:
+\
+\
+$P(Depressed | STEM) = \frac{P(Depressed \space\cap\space STEM)}{P(STEM)}$
+\
+\
+Moreover, we're interested if this probability is greater alone than the probability of being depressed across all majors, given out previous definition we can express this idea as:
+\
+\
+$P(Depressed | STEM) > P(Depressed)$
+\
+\
+But before we can step into calculations for this we need to determine whether or not these events are independent, we can also form our test hypothesis from this. If we postulate that that being a STEM major has an affect on depression in students, we would infer that these two variables are dependent, if they have no affect on one another we consider them independent. With this in mind we can state our null hypothesis, $H_0$, as our variables being independent, and our alternative hypothesis, $H_A$, will state that our variables are indeed dependent. As our variables in this case are categorical - the chi-square test will be our best option for determining this. Stated in a more succinct manner as:
+\
+\
+$H_0$: *The probability of being depressed is not dependent on being a STEM major.*
+
+$H_A$: *The probability of being depressed is dependent on being a STEM major.*
+\
+\
+The following code simply executes the chi-square test on the `stemDepressedTable` table.
+```{r}
+stemDepressedtableNM
+stemDepCHSQ <- chisq.test(stemDepressedtableNM, correct = TRUE)
+stemDepCHSQ
+```
+\
+Given that a Type II error would be more detrimental to our study, we opt to chose a relatively high significance level of .1 when making our decision. With a p-value of `r stemDepCHSQ$p.value`, we actually do not satisfy the p < 0.1 significance to reject our null hypothesis, and thus can conclude these events are independent.
+
+Knowing that, we can doubly enforce this by running a few simple calculations to determine *P(Depressed | STEM)*, we'll store these to make calculation easier in the future.
+\
+```{r}
+p_Depressed <- (stemDepressedtable[3,2]/stemDepressedtable[3,3])
+p_STEM <- (stemDepressedtable[2,3]/stemDepressedtable[3,3])
+
+p_depGstem <- (p_Depressed * p_STEM)/p_STEM
+
+```
+
+\
+Given that *P(Depressed)* equals `r p_Depressed` and *P(Depressed | STEM)* equals `r p_depGstem`, this does not fulfill our desired result of *P(Depressed | STEM) > P(Depressed)*, and further supports our rejection of the alternative hypothesis.
+
+
+### 5.2 Continued Evaluation of Assumptions
+
+Though our team set out evaluate principally how STEM majors are affected by depression, we can use similar methods to test other hypothesis in the same vein. Similar to our last section we can build methods to evaluate other mental illnesses and their propensity to appear in STEM majors, in this case we'll take a look at Anxiety using `stemAnxiousTable` - also from `4.3.2`.
+
+Once again we're investigating to see if there's any affect on the probability of a student having anxiety based on their enrollment in STEM curricula. We can express this as:
+\
+\
+$P(Anxious | STEM) = \frac{P(Anxious \space\cap\space STEM)}{P(STEM)}$
+\
+\
+And the meat n' taters portion of it:
+\
+\
+$P(Anxious | STEM) > P(Anxious)$
+\
+\
+Similarly we must check for independence between anxiety and STEM enrollment, constructing our hypothesis off of this once again: 
+\
+\
+$H_0$: *The probability of being Anxious is not dependent on being a STEM major.*
+
+$H_A$: *The probability of being Anxious is dependent on being a STEM major.*
+\
+\
+Now we execute the chi-square test on our data from `stemAnxioustable`.
+```{r}
+stemAnxioustableNM
+stemAnxCHSQ <- chisq.test(stemAnxioustable, correct = TRUE)
+stemAnxCHSQ
+```
+\
+Even after once again choosing a robust significance of 0.10, our p value of `r stemAnxCHSQ$p.value` fails to meet the p < .10 requirement to reject our null hypothesis. We summarily conclude that the probability of being anxious is not dependent on being a STEM major.
+
+This is reflected as we do our calculations for *P(Anxious | STEM) > P(Anxious)*.
+\
+```{r}
+p_Anxious <- (stemAnxioustable[3,2]/stemAnxioustable[3,3])
+p_STEM <- (stemAnxioustable[2,3]/stemAnxioustable[3,3])
+
+p_anxGstem <- (p_Anxious * p_STEM)/p_STEM
+```
+\
+Once again our decision is reinforced by *P(Anxious | STEM)* - `r p_anxGstem`, and *P(Anxious)* - `r p_Anxious`, not satisfying our original assumption of *P(Anxious | STEM) > P(Anxious)*.
+
+## 6. Conclusions
+
+### 6.1 Possible Pitfalls
 
 ## Appendix A - Data
 
